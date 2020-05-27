@@ -2,39 +2,34 @@ import React, { Component } from "react";
 import "antd/dist/antd.css";
 import { Input, Button, List } from "antd";
 import store from "./store";
+// import { CHANGE_DATA, REMOVE_ITEM, ADD_ITEM } from "./store/actions";
+import {
+  changeInputAction,
+  removeItemAction,
+  addItemAction,
+} from "./store/actionCreate";
 // import { connect } from "react-redux";
 
 class TodoList extends Component {
   constructor(props) {
     super(props);
     this.state = store.getState();
-    store.subscribe(this.storeChange)
-    
+    store.subscribe(this.storeChange);
   }
-  storeChange=()=>{
-    this.setState(store.getState())
-  }
-  changeInputValue = (e) =>{
-    const actions = {
-      type:'ChangeData',
-      value:e.target.value
-    }
-    store.dispatch(actions)
-  }
+  storeChange = () => {
+    this.setState(store.getState());
+  };
+  changeInputValue = (e) => {
+    store.dispatch(changeInputAction(e.target.value));
+  };
 
-  addItem = () =>{
-    store.dispatch({
-      type:'AddItem'
-    })
-  }
+  addItem = () => {
+    store.dispatch(addItemAction());
+  };
 
-  removeItem = (index) =>{
-    console.log('index',index)
-    store.dispatch({
-      type:'removeItem',
-      index
-    })
-  }
+  removeItem = (index) => {
+    store.dispatch(removeItemAction(index));
+  };
   render() {
     return (
       <div>
@@ -43,15 +38,32 @@ class TodoList extends Component {
             placeholder={this.state.inputValue}
             value={this.state.inputValue}
             style={{ width: "250px" }}
-            onChange={()=>{this.changeInputValue()}}
+            onChange={(e) => {
+              this.changeInputValue(e);
+            }}
           />
-          <Button type="primary" onClick={()=>{this.addItem()}}>ADD</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              this.addItem();
+            }}
+          >
+            ADD
+          </Button>
         </div>
         <div style={{ width: "300px" }}>
           <List
             bordered
             dataSource={this.state.list}
-            renderItem={(item,index) => <List.Item onClick={()=>{this.removeItem(index)}}>{item}</List.Item>}
+            renderItem={(item, index) => (
+              <List.Item
+                onClick={() => {
+                  this.removeItem(index);
+                }}
+              >
+                {item}
+              </List.Item>
+            )}
           />
         </div>
       </div>
